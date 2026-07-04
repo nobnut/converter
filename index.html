@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Unit Conversion</title>
+    <style>
+        /* === MATERIAL 3 EXPRESSIVE DARK THEME (From To-Do Project) === */
+        :root {
+            --md-sys-color-background: #1A1C19;
+            --md-sys-color-on-background: #E2E3DD;
+            --md-sys-color-surface: #2A2C29; 
+            --md-sys-color-on-surface: #E2E3DD;
+            --md-sys-color-on-surface-variant: #C2C9BD; 
+            --md-sys-color-primary: #9CD67D; 
+            --md-sys-color-on-primary: #0C3900;
+            --md-sys-color-primary-container: #265108;
+            --md-sys-color-error: #FFB4AB; 
+            --md-sys-color-error-container: #93000A;
+            --md-sys-color-outline: #8C9388;
+            
+            --radius-large: 28px;
+            --radius-medium: 16px;
+            --spacing: 12px;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+        body {
+            margin: 0;
+            font-family: system-ui, -apple-system, sans-serif;
+            background-color: var(--md-sys-color-background);
+            color: var(--md-sys-color-on-background);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            padding: var(--spacing);
+        }
+
+        h1 { text-align: center; font-size: 24px; font-weight: 700; margin: 20px 0; }
+        
+        #main-view { 
+            flex: 1; 
+            display: flex; 
+            flex-direction: column; 
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Form Elements adapted for Material 3 */
+        label {
+            display: block;
+            font-size: 14px;
+            color: var(--md-sys-color-on-surface-variant);
+            margin-bottom: 8px;
+            margin-top: 16px;
+        }
+
+        select, input[type="number"] {
+            width: 100%;
+            background-color: var(--md-sys-color-surface);
+            color: var(--md-sys-color-on-surface);
+            border: 1px solid var(--md-sys-color-outline);
+            border-radius: var(--radius-medium);
+            padding: 14px;
+            font-size: 16px;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        select:focus, input[type="number"]:focus {
+            border-color: var(--md-sys-color-primary);
+        }
+
+        /* Group containers (Cards) */
+        .converter-group {
+            background-color: var(--md-sys-color-surface);
+            border-radius: var(--radius-large);
+            padding: 24px;
+            margin-top: 24px;
+            border: 1px solid var(--md-sys-color-outline);
+        }
+
+        .converter-group h3 {
+            margin-top: 0;
+            color: var(--md-sys-color-primary);
+            font-size: 20px;
+            text-align: center;
+        }
+
+        /* Buttons matching the To-Do app */
+        .btn { 
+            border: none; 
+            border-radius: 100px; 
+            font-weight: 600; 
+            font-size: 15px; 
+            cursor: pointer; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            width: 100%;
+            padding: 16px;
+            margin-top: 24px;
+        }
+        
+        .btn-primary { 
+            background-color: var(--md-sys-color-primary-container); 
+            color: var(--md-sys-color-primary); 
+        }
+
+        /* Result Display Card */
+        #result {
+            background-color: var(--md-sys-color-primary-container);
+            color: var(--md-sys-color-primary);
+            border-radius: var(--radius-medium);
+            padding: 20px;
+            font-size: 18px;
+            font-weight: 500;
+            text-align: center;
+            margin-top: 24px;
+            line-height: 1.6;
+        }
+
+        /* Main Category Dropdown styling */
+        .category-select-wrapper {
+            margin-bottom: 12px;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="main-view">
+        <h1>Unit Conversion</h1>
+
+        <div class="category-select-wrapper">
+            <label for="grpSelect">Select Conversion Category</label>
+            <select id="grpSelect" onchange="grpSwitch()">
+                <option value="grpTime">Time</option>
+                <option value="grpLength">Length</option>
+                <option value="grpTemperature">Temperature</option>
+                <option value="grpIT">IT</option>
+                <option value="grpArea">Area</option>
+                <option value="grpMass">Mass</option>
+                <option value="grpVolume">Volume</option>
+                <option value="grpSpeed">Speed</option>
+            </select>
+        </div>
+
+        <!-- TIME -->
+        <div id="grpTime" class="converter-group" style="display:none;">
+            <h3>Time</h3>
+            <label for="timeamt">Amount</label>
+            <input type="number" value="1" min="1" id="timeamt" onkeyup="convUnits('time')">
+            
+            <label for="timefr">From</label>
+            <select id="timefr" onchange="convUnits('time')">
+                <option value="uMs">ms</option>
+                <option value="uSec">sec</option>
+                <option value="uMin">min</option>
+                <option SELECTED value="uHr">hr</option>
+                <option value="uDay">day</option>
+                <option value="uWk">wk</option>
+                <option value="uMo">mo</option>
+                <option value="uYr">yr</option>
+                <option value="uDec">dec</option>
+                <option value="uC">c</option>
+            </select>
+            
+            <label for="timeto">To</label>
+            <select id="timeto" onchange="convUnits('time')">
+                <option value="uMs">ms</option>
+                <option SELECTED value="uSec">sec</option>
+                <option value="uMin">min</option>
+                <option value="uHr">hr</option>
+                <option value="uDay">day</option>
+                <option value="uWk">wk</option>
+                <option value="uMo">mo</option>
+                <option value="uYr">yr</option>
+                <option value="uDec">dec</option>
+                <option value="uC">c</option>
+            </select>
+            
+            <button id="timeBtn" class="btn btn-primary" onclick="convUnits('time');">Convert</button>
+        </div>
+
+        <!-- LENGTH -->
+        <div id="grpLength" class="converter-group" style="display:none;">
+            <h3>Length</h3>
+            <label for="lgthamt">Amount</label>
+            <input type="number" value="1" min="1" id="lgthamt" onkeyup="convUnits('lgth')">
+            
+            <label for="lgthfr">From</label>
+            <select id="lgthfr" onchange="convUnits('lgth')">
+                <option disabled>==Metric==</option>
+                <option value="uMm">mm</option>
+                <option value="uCm">cm</option>
+                <option value="uM">m</option>
+                <option disabled>==Imperial==</option>
+                <option SELECTED value="uIn">in</option>
+                <option value="uFt">ft</option>
+                <option value="uYd">yd</option>
+                <option value="uMi">mi</option>
+            </select>
+            
+            <label for="lgthto">To</label>
+            <select id="lgthto" onchange="convUnits('lgth')">
+                <option disabled>==Metric==</option>
+                <option value="uMm">mm</option>
+                <option SELECTED value="uCm">cm</option>
+                <option value="uM">m</option>
+                <option disabled>==Imperial==</option>
+                <option value="uIn">in</option>
+                <option value="uFt">ft</option>
+                <option value="uYd">yd</option>
+                <option value="uMi">mi</option>
+            </select>
+            
+            <button id="lgthBtn" class="btn btn-primary" onclick="convUnits('lgth');">Convert</button>
+        </div>
+
+        <!-- TEMPERATURE -->
+        <div id="grpTemperature" class="converter-group" style="display:none;">
+            <h3>Temperature</h3>
+            <label for="tmpamt">Amount</label>
+            <input type="number" value="1" id="tmpamt" onkeyup="convTmp()">
+            
+            <label for="tmpfr">From</label>
+            <select id="tmpfr" onchange="convTmp()">
+                <option value="uDegc">°C</option>
+                <option SELECTED value="uDegf">°F</option>
+                <option value="uDegk">K</option>
+                <option value="uDegn">°N</option>
+            </select>
+            
+            <label for="tmpto">To</label>
+            <select id="tmpto" onchange="convTmp()">
+                <option SELECTED value="uDegc">°C</option>
+                <option value="uDegf">°F</option>
+                <option value="uDegk">K</option>
+                <option value="uDegn">°N</option>
+            </select>
+            
+            <button id="tmpBtn" class="btn btn-primary" onclick="convTmp();">Convert</button>
+        </div>
+
+        <!-- IT -->
+        <div id="grpIT" class="converter-group" style="display:none;">
+            <h3>IT</h3>
+            <label for="itamt">Amount</label>
+            <input type="number" value="1" min="1" id="itamt" onkeyup="convUnits('it')">
+            
+            <label for="itfr">From</label>
+            <select id="itfr" onchange="convUnits('it')">
+                <option value="uBit">bit</option>
+                <option value="uByte">byte</option>
+                <option value="uKb">KB</option>
+                <option SELECTED value="uMb">MB</option>
+                <option value="uGb">GB</option>
+                <option value="uTb">TB</option>
+            </select>
+            
+            <label for="itto">To</label>
+            <select id="itto" onchange="convUnits('it')">
+                <option value="uBit">bit</option>
+                <option value="uByte">byte</option>
+                <option SELECTED value="uKb">KB</option>
+                <option value="uMb">MB</option>
+                <option value="uGb">GB</option>
+                <option value="uTb">TB</option>
+            </select>
+            
+            <button id="itBtn" class="btn btn-primary" onclick="convUnits('it');">Convert</button>
+        </div>
+
+        <!-- AREA -->
+        <div id="grpArea" class="converter-group" style="display:none;">
+            <h3>Area</h3>
+            <label for="areaamt">Amount</label>
+            <input type="number" value="1" min="1" id="areaamt" onkeyup="convUnits('area')">
+            
+            <label for="areafr">From</label>
+            <select id="areafr" onchange="convUnits('area')">
+                <option disabled>==Metric==</option>
+                <option value="uCm2">cm²</option>
+                <option value="uM2">m²</option>
+                <option value="uKm2">km²</option>
+                <option value="uHectare">hectare</option>
+                <option disabled>==Imperial==</option>
+                <option value="uSqin">sq in</option>
+                <option SELECTED value="uSqft">sq ft</option>
+                <option value="uSqmi">sq mi</option>
+                <option value="uAcre">acre</option>
+            </select>
+            
+            <label for="areato">To</label>
+            <select id="areato" onchange="convUnits('area')">
+                <option disabled>==Metric==</option>
+                <option value="uCm2">cm²</option>
+                <option SELECTED value="uM2">m²</option>
+                <option value="uKm2">km²</option>
+                <option value="uHectare">hectare</option>
+                <option disabled>==Imperial==</option>
+                <option value="uSqin">sq in</option>
+                <option value="uSqft">sq ft</option>
+                <option value="uSqmi">sq mi</option>
+                <option value="uAcre">acre</option>
+            </select>
+            
+            <button id="areaBtn" class="btn btn-primary" onclick="convUnits('area');">Convert</button>
+        </div>
+
+        <!-- MASS -->
+        <div id="grpMass" class="converter-group" style="display:none;">
+            <h3>Mass</h3>
+            <label for="massamt">Amount</label>
+            <input type="number" value="1" min="1" id="massamt" onkeyup="convUnits('mass')">
+            
+            <label for="massfr">From</label>
+            <select id="massfr" onchange="convUnits('mass')">
+                <option disabled>==Metric==</option>
+                <option value="uMg">mg</option>
+                <option value="uG">g</option>
+                <option value="uKg">kg</option>
+                <option value="uTon">ton / tonne (metric ton)</option>
+                <option disabled>==Imperial==</option>
+                <option value="uOz">oz</option>
+                <option value="uOzav">oz avoirdupois</option>
+                <option SELECTED value="uLb">lb</option>
+                <option value="uStone">stone</option>
+                <option value="uSt">short ton</option>
+            </select>
+            
+            <label for="massto">To</label>
+            <select id="massto" onchange="convUnits('mass')">
+                <option disabled>==Metric==</option>
+                <option value="uMg">mg</option>
+                <option value="uG">g</option>
+                <option SELECTED value="uKg">kg</option>
+                <option value="uTon">ton / tonne (metric ton)</option>
+                <option disabled>==Imperial==</option>
+                <option value="uOz">oz</option>
+                <option value="uOzav">oz avoirdupois</option>
+                <option value="uLb">lb</option>
+                <option value="uStone">stone</option>
+                <option value="uSt">ton</option>
+            </select>
+            
+            <button id="massBtn" class="btn btn-primary" onclick="convUnits('mass');">Convert</button>
+        </div>
+
+        <!-- VOLUME -->
+        <div id="grpVolume" class="converter-group" style="display:none;">
+            <h3>Volume</h3>
+            <label for="volamt">Amount</label>
+            <input type="number" value="1" min="1" id="volamt" onkeyup="convUnits('vol')">
+            
+            <label for="volfr">From</label>
+            <select id="volfr" onchange="convUnits('vol')">
+                <option disabled>==Metric==</option>
+                <option value="uL">litre</option>
+                <option value="uMl">millilitre</option>
+                <option value="uCc">cc</option>
+                <option value="uMm3">mm³</option>
+                <option value="uM3">m³</option>
+                <option value="uKm3">km³</option>
+                <option disabled>==Imperial==</option>
+                <option SELECTED value="uFloz">fl oz (imp)</option>
+                <option value="uTsp">teaspoon (Can)</option>
+                <option value="uTbsp">tablespoon (Can)</option>
+                <option value="uCup">cup</option>
+                <option value="uGali">gal (imp)</option>
+                <option value="uGalu">gal (US)</option>
+                <option value="uPt">pint (imp)</option>
+                <option value="uQt">quart (imp)</option>
+                <option value="uCuin">cu in</option>
+                <option value="uCuft">cu ft</option>
+                <option value="uCumi">cu mi</option>
+            </select>
+            
+            <label for="volto">To</label>
+            <select id="volto" onchange="convUnits('vol')">
+                <option value="uL">litre</option>
+                <option SELECTED value="uMl">millilitre</option>
+                <option value="uCc">cc</option>
+                <option value="uMm3">mm³</option>
+                <option value="uM3">m³</option>
+                <option value="uKm3">km³</option>
+                <option disabled>==Imperial==</option>
+                <option value="uFloz">fl oz (imp)</option>
+                <option value="uTsp">teaspoon (Can)</option>
+                <option value="uTbsp">tablespoon (Can)</option>
+                <option value="uCup">cup</option>
+                <option value="uGali">gal (imp)</option>
+                <option value="uGalu">gal (US)</option>
+                <option value="uPt">pint (imp)</option>
+                <option value="uQt">quart (imp)</option>
+                <option value="uCuin">cu in</option>
+                <option value="uCuft">cu ft</option>
+                <option value="uCumi">cu mi</option>
+            </select>
+            
+            <button id="volBtn" class="btn btn-primary" onclick="convUnits('vol');">Convert</button>
+        </div>
+
+        <!-- SPEED -->
+        <div id="grpSpeed" class="converter-group" style="display:none;">
+            <h3>Speed</h3>
+            <label for="spdamt">Amount</label>
+            <input type="number" value="1" min="1" id="spdamt" onkeyup="convUnits('spd')">
+            
+            <label for="spdfr">From</label>
+            <select id="spdfr" onchange="convUnits('spd')">
+                <option disabled>==Metric==</option>
+                <option value="uMs">m/s</option>
+                <option value="uKmh">km/h</option>
+                <option disabled>==Imperial==</option>
+                <option SELECTED value="uMph">mph</option>
+                <option value="uMpm">mpm</option>
+                <option value="uMps">mps</option>
+                <option value="uFps">fps</option>
+            </select>
+            
+            <label for="spdto">To</label>
+            <select id="spdto" onchange="convUnits('spd')">
+                <option disabled>==Metric==</option>
+                <option value="uMs">m/s</option>
+                <option SELECTED value="uKmh">km/h</option>
+                <option disabled>==Imperial==</option>
+                <option value="uMph">mph</option>
+                <option value="uMpm">mpm</option>
+                <option value="uMps">mps</option>
+                <option value="uFps">fps</option>
+            </select>
+            
+            <button id="spdBtn" class="btn btn-primary" onclick="convUnits('spd');">Convert</button>
+        </div>
+
+        <!-- RESULT AREA -->
+        <div id="result" style="display:none;"></div>
+
+    </div>
+
+<!-- JavaScript Combined (units.js & obj.js) -->
+<script type="text/javascript">
+    // === FROM units.js ===
+    var units = {
+      "uMs":"0.001",
+      "uSec":"1",
+      "uMin":"60",
+      "uHr":"3600",
+      "uDay":"86400",
+      "uWk":"604800",
+      "uMo":"2592000",
+      "uYr":"31536000",
+      "uDec":"315360000",
+      "uC":"3153600000",
+      "uMm":"0.001",
+      "uCm":"0.01",
+      "uM":"1",
+      "uIn":"0.0254",
+      "uFt":"0.3048",
+      "uYd":"0.9144",
+      "uMi":"1609.344",
+      "uBit":"1",
+      "uByte":"8",
+      "uKb":"8192",
+      "uMb":"8388608",
+      "uGb":"8589934592",
+      "uTb":"8796093022208",
+      "uCm2":"0.0001",
+      "uM2":"1",
+      "uKm2":"1000000",
+      "uHectare":"10000",
+      "uSqin":"0.00064516",
+      "uSqft":"0.09290304",
+      "uSqmi":"2589988.1103359996",
+      "uAcre":"4046.8564224",
+      "uMg":"0.000001",
+      "uG":"0.001",
+      "uKg":"1",
+      "uTon":"1000",
+      "uOz":"0.028",
+      "uOzav":"28.349523125",
+      "uLb":"0.45359237",
+      "uStone":"6.35029318",
+      "uSt":"907.18474",
+      "uL":"0.001",
+      "uMl":"0.000001",
+      "uCc":"0.000001",
+      "uMm3":"0.000000001",
+      "uM3":"1",
+      "uKm3":"1000000000",
+      "uFloz":"0.000028413062499999998",
+      "uTsp":"0.000004735510416666666",
+      "uTbsp":"0.000014206531249999999",
+      "uCup":"0.00022730449999999999",
+      "uGali":"0.004546090000000001",
+      "uGalu":"0.003785411784",
+      "uPt":"0.00056826125",
+      "uQt":"0.0011365225000000002",
+      "uCuin":"0.000016387064",
+      "uCuft":"0.028316846592",
+      "uCumi":"4168181825.440579584",
+      "uMs":"1",
+      "uKmh":"0.277777777777777",
+      "uMph":"0.44704",
+      "uMpm":"26.8224",
+      "uMps":"1609.344",
+      "uFps":"0.3048"
+    };
+
+    var temp = {
+      "uDegc":"1,-273.15",
+      "uDegf":"1,459.67*(5/9)",
+      "uDegk":"1,0",
+      "uDegn":"(100/33),273.15"
+    };
+
+    var abbrev = {
+      "uMs":"ms",
+      "uSec":"s",
+      "uMin":"m",
+      "uHr":"hr",
+      "uDay":"d",
+      "uWk":"wk",
+      "uMo":"mo",
+      "uYr":"yr",
+      "uDec":"dec",
+      "uC":"C",
+      "uMm":"mm",
+      "uCm":"cm",
+      "uM":"m",
+      "uIn":"in",
+      "uFt":"ft",
+      "uYd":"yd",
+      "uMi":"mi",
+      "uBit":"b",
+      "uByte":"B",
+      "uKb":"KB",
+      "uMb":"MB",
+      "uGb":"GB",
+      "uTb":"TB",
+      "uCm2":"cm²",
+      "uM2":"m²",
+      "uKm2":"km²",
+      "uHectare":"hectare",
+      "uSqin":"sq in",
+      "uSqft":"sq ft",
+      "uSqmi":"sq mi",
+      "uAcre":"acre",
+      "uMg":"mg",
+      "uG":"g",
+      "uKg":"kg",
+      "uTon":"t",
+      "uOz":"oz.",
+      "uOzav":"oz. av.",
+      "uLb":"lb",
+      "uStone":"stone",
+      "uSt":"ST",
+      "uL":"l",
+      "uMl":"mL",
+      "uCc":"cc",
+      "uMm3":"mm³",
+      "uM3":"m³",
+      "uKm3":"km³",
+      "uFloz":"fl. oz.",
+      "uTsp":"tsp.",
+      "uTbsp":"tbsp.",
+      "uCup":"cup",
+      "uGali":"gal (imp.)",
+      "uGalu":"gal (US)",
+      "uPt":"pt",
+      "uQt":"qt",
+      "uCuin":"cu in",
+      "uCuft":"cu ft",
+      "uCumi":"cu mi",
+      "uMs":"m/s",
+      "uKmh":"km/h",
+      "uMph":"mph",
+      "uMpm":"mpm",
+      "uMps":"mps",
+      "uFps":"fps",
+      "uDegc":"°C",
+      "uDegf":"°F",
+      "uDegk":"K",
+      "uDegn":"°N"
+    };
+
+    // === FROM obj.js ===
+    function grpSwitch() {
+      var grp = document.getElementById("grpSelect");
+      for (var i = 0; i < grp.options.length; i++) {
+        var grpName = grp.options[i].value;
+        document.getElementById(grpName).style.display = "none";
+      }
+      document.getElementById(grp.value).style.display = "block";
+      document.getElementById("result").style.display = "none"; // Hide result on switch
+    }
+
+    function addCommas(nStr) {
+      nStr += '';
+      var x = nStr.split('.');
+      var x1 = x[0];
+      var x2 = x.length > 1 ? '.' + x[1] : '';
+      var rgx = /(\d+)(\d{3})/;
+      while (rgx.test(x1)) {
+        x1 = x1.replace(rgx, '$1' + ',' + '$2');
+      }
+      return x1 + x2;
+    }
+
+    function convUnits(c) {
+      var amt = document.getElementById(c+ "amt").value;
+      var result = document.getElementById("result");
+
+      var frUnit = document.getElementById(c + "fr").value;
+      var frVal = units[frUnit];
+      var toUnit = document.getElementById(c + "to").value;
+      var toVal = units[toUnit];
+
+      if (frVal == undefined || toVal == undefined) {
+        result.style.display = "none";
+        return;
+      }
+
+      var frAbbrev = abbrev[frUnit];
+      var toAbbrev = abbrev[toUnit];
+
+      result.style.display = "block";
+      result.innerHTML = amt + " " + frAbbrev + " = " + addCommas(((amt*frVal)/toVal).toFixed(3)) + " " + toAbbrev + " <br><br>" + amt + " " + toAbbrev + " = " + addCommas(((amt*toVal)/frVal).toFixed(3)) + " " + frAbbrev;
+      return true;
+    }
+
+    function convTmp() {
+      var amt = document.getElementById("tmpamt").value;
+      var frUnit = document.getElementById("tmpfr").value;
+      var frVal = units[frUnit]; // Though fetched, actual temp mapping in temp var
+      var toUnit = document.getElementById("tmpto").value;
+      var toVal = units[toUnit];
+      var frAbbrev = abbrev[frUnit];
+      var toAbbrev = abbrev[toUnit];
+      var res, res2;
+
+      if (frUnit == "uDegc" && toUnit == "uDegf") { res = parseInt(amt) * (9/5) + 32; res2 = (((parseInt(amt)) + 459.67) * (5/9)) - 273.15; }
+      if (frUnit == "uDegc" && toUnit == "uDegk") { res = parseInt(amt) + 273.15; res2 = parseInt(amt) - 273.15; }
+      if (frUnit == "uDegc" && toUnit == "uDegn") { res = parseInt(amt)/(100/33); res2 = parseInt(amt)*(100/33); }
+      if (frUnit == "uDegc" && toUnit == "uDegc") { res = parseInt(amt); res2 = parseInt(amt); }
+
+      if (frUnit == "uDegf" && toUnit == "uDegc") { res = (((parseInt(amt)) + 459.67) * (5/9)) - 273.15; res2 = parseInt(amt) * (9/5) + 32; }
+      if (frUnit == "uDegf" && toUnit == "uDegk") { res = ((parseInt(amt)) + 459.67) * (5/9); res2 = (parseInt(amt) - 273.15) * (9/5) + 32; }
+      if (frUnit == "uDegf" && toUnit == "uDegn") { res = ((parseInt(amt) - 32)/(9/5))/(100/33); res2 = (parseInt(amt)*(100/33)) * (9/5) + 32; }
+      if (frUnit == "uDegf" && toUnit == "uDegf") { res = parseInt(amt); res2 = parseInt(amt); }
+
+      if (frUnit == "uDegk" && toUnit == "uDegc") { res = parseInt(amt) - 273.15; res2 = parseInt(amt) + 273.15; }
+      if (frUnit == "uDegk" && toUnit == "uDegf") { res = (parseInt(amt) - 273.15) * (9/5) + 32; res2 = ((parseInt(amt)) + 459.67) * (5/9); }
+      if (frUnit == "uDegk" && toUnit == "uDegn") { res = (parseInt(amt) - 273.15)/(100/33); res2 = parseInt(amt) * (100/33) + 273.15; }
+      if (frUnit == "uDegk" && toUnit == "uDegk") { res = parseInt(amt); res2 = parseInt(amt); }
+
+      if (frUnit == "uDegn" && toUnit == "uDegc") { res = parseInt(amt)*(100/33); res2 = parseInt(amt)/(100/33); }
+      if (frUnit == "uDegn" && toUnit == "uDegf") { res = (parseInt(amt)*(100/33)) * (9/5) + 32; res2 = ((parseInt(amt) - 32)/(9/5))/(100/33); }
+      if (frUnit == "uDegn" && toUnit == "uDegk") { res = parseInt(amt) * (100/33) + 273.15; res2 = (parseInt(amt) - 273.15)/(100/33); }
+      if (frUnit == "uDegn" && toUnit == "uDegn") { res = parseInt(amt); res2 = parseInt(amt); }
+
+      var result = document.getElementById("result");
+      result.style.display = "block";
+      result.innerHTML = amt + " " + frAbbrev + " = " + res.toFixed(1) + " " + toAbbrev + " <br><br>" + amt + " " + toAbbrev + " = " + res2.toFixed(1) + " " + frAbbrev;
+      return true;
+    }
+
+    // Initialize the default view when the page loads
+    window.onload = function() {
+        grpSwitch();
+    };
+</script>
+</body>
+</html>
